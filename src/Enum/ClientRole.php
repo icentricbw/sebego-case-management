@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Enum;
+
+enum ClientRole: string
+{
+    case CLIENT_ROLE_PLAINTIFF = 'PLAINTIFF';
+    case CLIENT_ROLE_DEFENDANT = 'DEFENDANT';
+    case CLIENT_ROLE_APPLICANT = 'APPLICANT';
+    case CLIENT_ROLE_RESPONDENT = 'RESPONDENT';
+    case CLIENT_ROLE_PETITIONER = 'PETITIONER';
+    case CLIENT_ROLE_CLAIMANT = 'CLAIMANT';
+    case CLIENT_ROLE_BUYER = 'BUYER';
+    case CLIENT_ROLE_SELLER = 'SELLER';
+}

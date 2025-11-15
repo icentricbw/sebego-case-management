@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Enum;
+
+enum DocumentType: string
+{
+    case DOC_TYPE_ID = 'ID';
+    case DOC_TYPE_PASSPORT = 'PASSPORT';
+    case DOC_TYPE_PROOF_OF_ADDRESS = 'PROOF_OF_ADDRESS';
+    case DOC_TYPE_REGISTRATION_CERTIFICATE = 'REGISTRATION_CERTIFICATE';
+    case DOC_TYPE_TAX_CLEARANCE = 'TAX_CLEARANCE';
+    case DOC_TYPE_MEMORANDUM = 'MEMORANDUM';
+    case DOC_TYPE_ARTICLES = 'ARTICLES';
+    case DOC_TYPE_OTHER = 'OTHER';
+}
