@@ -4,6 +4,6 @@ namespace App\Enum;
 
 enum ClientType: string
 {
-    case INDIVIDUAL = 'OMANG';
+    case INDIVIDUAL = 'INDIVIDUAL';
     case ORGANIZATION = 'ORGANIZATION';
 }

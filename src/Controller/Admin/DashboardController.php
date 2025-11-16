@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Archive;
+use App\Entity\CaseType;
 use App\Entity\Client;
 use App\Entity\CommunicationLog;
 use App\Entity\Document;
@@ -11,6 +12,8 @@ use App\Entity\Matter;
 use App\Entity\MatterUpdate;
 use App\Entity\Task;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -19,14 +22,45 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
+
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    )
+    {
+    }
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        // Option 1: Render custom dashboard
-        return $this->render('admin/dashboard.html.twig');
+        $now = new \DateTimeImmutable();
+        $weekStart = $now->modify('monday this week')->setTime(0, 0);
+        $weekEnd = $now->modify('sunday this week')->setTime(23, 59, 59);
 
-        // Option 2: Redirect to a specific CRUD controller
-        // return $this->redirect($this->generateUrl('admin', ['crudAction' => 'index', 'crudControllerFqcn' => MatterCrudController::class]));
+        return $this->render('admin/dashboard.html.twig', [
+            // Statistics
+            'activeMatters' => $this->entityManager->getRepository(Matter::class)->getActiveMattersCount(),
+            'totalClients' => $this->entityManager->getRepository(Client::class)->getTotalClientsCount(),
+            'pendingTasks' => $this->entityManager->getRepository(Task::class)->getPendingTasksCount(),
+            'overdueTasks' => $this->entityManager->getRepository(Task::class)->getOverdueTasksCount(),
+            'mattersThisWeek' => $this->entityManager->getRepository(Matter::class)->getMattersThisWeekCount($weekStart, $weekEnd),
+            'archivedMatters' => $this->entityManager->getRepository(Archive::class)->getArchivedMattersCount(),
+
+            // Lists
+            'recentMatters' => $this->entityManager->getRepository(Matter::class)->getRecentMatters(5),
+            'upcomingTasks' => $this->entityManager->getRepository(Task::class)->getUpcomingTasks(10),
+            'mattersThisWeekList' => $this->entityManager->getRepository(Matter::class)->getMattersThisWeek($weekStart, $weekEnd, 10),
+            'mattersByCaseType' => $this->entityManager->getRepository(Matter::class)->getMattersByCaseType(),
+
+            // Date info for display
+            'weekStart' => $weekStart,
+            'weekEnd' => $weekEnd,
+        ]);
+    }
+
+    public function configureAssets(): Assets
+    {
+        return parent::configureAssets()
+            ->addAssetMapperEntry( 'admin');
     }
 
     public function configureDashboard(): Dashboard
@@ -35,7 +69,6 @@ class DashboardController extends AbstractDashboardController
             ->setTitle('Sebego Legal CMS')
             ->setFaviconPath('favicon.ico')
             ->renderContentMaximized()
-            ->renderSidebarMinimized()
             ->setLocales(['en']);
     }
 
@@ -44,9 +77,18 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
 
         yield MenuItem::section('Case Management');
+        yield MenuItem::section('Clients');
+        yield MenuItem::subMenu('Clients', 'fas fa-users')
+            ->setSubItems([
+                MenuItem::linkToCrud('Individual Clients', 'fas fa-user', Client::class)
+                    ->setController(ClientIndividualCrudController::class),
+                MenuItem::linkToCrud('Organization Clients', 'fas fa-building', Client::class)
+                    ->setController(ClientOrganizationCrudController::class),
+            ]);
+        yield MenuItem::linkToCrud('Case Types', 'fas fa-folder', CaseType::class);
         yield MenuItem::linkToCrud('Matters', 'fa fa-briefcase', Matter::class);
-        yield MenuItem::linkToCrud('Clients', 'fa fa-users', Client::class);
-        yield MenuItem::linkToCrud('Matter Updates', 'fa fa-clipboard-list', MatterUpdate::class);
+        //yield MenuItem::linkToCrud('Clients', 'fa fa-users', Client::class);
+//        yield MenuItem::linkToCrud('Matter Updates', 'fa fa-clipboard-list', MatterUpdate::class);
 
         yield MenuItem::section('Tasks & Workflow');
         yield MenuItem::linkToCrud('Tasks', 'fa fa-tasks', Task::class);

@@ -1,0 +1,24 @@
+{% extends 'Mails/email-base.html.twig' %}
+
+{% block content %}
+    <row>
+        <columns>
+
+            <spacer size="16"></spacer>
+
+            <h2>Good day {{ user.email }}c</h2>
+            <p>
+                Please confirm your email by following this <a
+                        href="{{ url('default_confirm_token',{'token':user.confirmationToken}) }}">link</a>
+            </p>
+
+            <p>
+                Your password is <strong>{{ user.newRetypePassword }}</strong>
+            </p>
+
+        </columns>
+    </row>
+
+{% endblock %}
+
+

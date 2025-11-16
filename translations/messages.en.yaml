@@ -1,0 +1,4 @@
+# translations/messages.fr.yaml
+auth_code: Please enter code sent to your email
+app_name: File Management System
+no_upcoming: There are no upcoming files/cases

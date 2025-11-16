@@ -19,7 +19,6 @@ class CommunicationLog
     use SoftDeleteableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 

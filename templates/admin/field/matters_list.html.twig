@@ -1,0 +1,41 @@
+{# templates/admin/field/matters_list.html.twig #}
+
+{% if field.value is empty %}
+    <p class="text-muted">
+        <i class="fas fa-info-circle"></i> No matters linked to this case type.
+    </p>
+{% else %}
+    <div class="badge bg-primary mb-3">
+        {{ field.value|length }} matter(s)
+    </div>
+
+    <ul class="list-group">
+        {% for matter in field.value %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ matter.name ?? 'Untitled Matter' }}</strong>
+                    <br>
+                    <small class="text-muted">
+                        Created: {{ matter.createdAt ? matter.createdAt|date('M d, Y') : 'N/A' }}
+                    </small>
+                </div>
+                <div>
+                    <a href="{{ ea_url()
+                        .setController('App\\Controller\\Admin\\MatterCrudController')
+                        .setAction('detail')
+                        .setEntityId(matter.id) }}"
+                       class="btn btn-sm btn-outline-primary me-1">
+                        View
+                    </a>
+                    <a href="{{ ea_url()
+                        .setController('App\\Controller\\Admin\\MatterCrudController')
+                        .setAction('edit')
+                        .setEntityId(matter.id) }}"
+                       class="btn btn-sm btn-outline-secondary">
+                        Edit
+                    </a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

@@ -1,0 +1,15 @@
+{% extends 'Mails/email-base.html.twig' %}
+
+{% block content %}
+    <spacer size="18"></spacer>
+    <row>
+        <columns small="12">
+            <p>Good day {{ user.email }}</p>
+            <spacer size="18"></spacer>
+            <p>
+                Please be reminded of upcoming action for File Number <b>{{ file.fileId }}</b> on {{ file.dateTimeOfNextAction|date('d.m.Y, H:i:s ') }}hrs.
+            </p>
+        </columns>
+    </row>
+
+{% endblock %}

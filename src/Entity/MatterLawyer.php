@@ -18,7 +18,6 @@ class MatterLawyer
     use TimestampableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 

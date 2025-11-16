@@ -38,8 +38,8 @@ class ClientCrudController extends AbstractCrudController
             ->setPaginatorPageSize(30)
             ->setPageTitle('index', 'Clients')
             ->setPageTitle('new', 'Add New Client')
-            ->setPageTitle('edit', fn (Client $client) => sprintf('Edit Client: %s', $client->getDisplayName()))
-            ->setPageTitle('detail', fn (Client $client) => sprintf('Client: %s', $client->getDisplayName()));
+            ->setPageTitle('edit', fn (Client $client) => sprintf('Edit Client: %s', $client))
+            ->setPageTitle('detail', fn (Client $client) => sprintf('Client: %s', $client));
     }
 
     public function configureActions(Actions $actions): Actions
@@ -86,9 +86,9 @@ class ClientCrudController extends AbstractCrudController
             ])
             ->setRequired(true);
 
-        yield BooleanField::new('isActive')
-            ->setColumns(6)
-            ->renderAsSwitch(false);
+//        yield BooleanField::new('isActive')
+//            ->setColumns(6)
+//            ->renderAsSwitch(false);
 
         // Individual fields
         yield TextField::new('fullName')

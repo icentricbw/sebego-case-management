@@ -5,10 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\Task;
 use App\Enum\Priority;
 use App\Enum\TaskStatusType;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -18,6 +20,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class TaskCrudController extends AbstractCrudController
 {
@@ -43,7 +49,7 @@ class TaskCrudController extends AbstractCrudController
         $markComplete = Action::new('markComplete', 'Mark Complete', 'fa fa-check')
             ->linkToCrudAction('markComplete')
             ->displayIf(static function (Task $task) {
-                return $task->getStatus() !== TaskStatusType::TASK_STATUS_COMPLETED;
+                return $task->getTaskStatusType() !== TaskStatusType::TASK_STATUS_COMPLETED;
             });
 
         return $actions
@@ -110,7 +116,7 @@ class TaskCrudController extends AbstractCrudController
             ])
             ->setRequired(true);
 
-        yield ChoiceField::new('status')
+        yield ChoiceField::new('taskStatusType')
             ->setColumns(3)
             ->setChoices([
                 'Pending' => TaskStatusType::TASK_STATUS_PENDING,
@@ -142,12 +148,32 @@ class TaskCrudController extends AbstractCrudController
             ->setFormTypeOption('disabled', true);
     }
 
-    public function markComplete($entityManager, $entity): void
-    {
-        $entity->setStatus(TaskStatusType::TASK_STATUS_COMPLETED);
-        $entity->setCompletedAt(new \DateTimeImmutable());
-        $entityManager->flush();
 
-        $this->addFlash('success', 'Task marked as completed!');
+    /**
+     * Mark task as complete
+     */
+    public function markComplete(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): RedirectResponse
+    {
+        /** @var Task $task */
+        $task = $context->getEntity()->getInstance();
+
+        if ($task->getTaskStatusType() !== TaskStatusType::TASK_STATUS_COMPLETED) {
+            $task->setTaskStatusType(TaskStatusType::TASK_STATUS_COMPLETED);
+            $entityManager->flush();
+
+            $this->addFlash('success', sprintf('Task "%s" marked as complete!', $task->getTitle()));
+        } else {
+            $this->addFlash('warning', 'Task is already completed or cannot be marked as complete.');
+        }
+
+
+        $targetUrl = $adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Crud::PAGE_INDEX)
+            ->setEntityId($task->getId())
+            ->generateUrl();
+
+        return $this->redirect($targetUrl);
     }
+
 }

@@ -22,20 +22,19 @@ class Client
     use SoftDeleteableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $fullName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $identificationNumber = null;
 
     #[ORM\Column(enumType: ClientType::class)]
     private ?ClientType $clientType = null;
 
-    #[ORM\Column(enumType: IdentificationType::class)]
+    #[ORM\Column(nullable: true, enumType: IdentificationType::class)]
     private ?IdentificationType $identificationType = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -83,7 +82,7 @@ class Client
     /**
      * @var Collection<int, Document>
      */
-    #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'client')]
+    #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'client', cascade: ['persist', 'remove'])]
     private Collection $documents;
 
     /**
@@ -385,5 +384,13 @@ class Client
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        if($this->fullName !== null)
+            return  $this->fullName;
+
+        return $this->companyName;
     }
 }

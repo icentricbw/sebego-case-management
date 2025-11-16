@@ -1,0 +1,64 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block header %}
+    <nav class="navbar" role="navigation">
+        {% block header_navbar %}
+            <div id="header-logo">
+                {% block header_logo %}
+                    <img class="py-2" src="{{ asset('assets/images/logo.png') }}" alt="logo">
+                    <a class="logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
+                        <span class="logo-custom">{{ ea.dashboardTitle|raw }}</span>
+                        <span class="logo-compact"><i class="fas fa-home"></i></span>
+                    </a>
+                {% endblock header_logo %}
+            </div>
+        {% endblock header_navbar %}
+    </nav>
+{% endblock header %}
+ {% block header_custom_menu_wrapper %}
+     <div class="navbar-custom-menu d-flex align-items-center">
+         {% block header_custom_menu %}
+
+             <div class="dropdown user-menu-wrapper  {{ is_granted(impersonator_permission) ? 'user-is-impersonated' }}">
+
+
+                 <a class="user-details" type="button" data-bs-toggle="dropdown" data-bs-offset="0,5"
+                    aria-expanded="false">
+
+                     {{ user_menu_avatar }}
+                     {% if ea.userMenu.isNameDisplayed %}
+
+                         <span class="user-name">{{ ea.userMenu.name }} </span>
+                     {% endif %}
+                 </a>
+
+                 {{ user_menu_dropdown }}
+             </div>
+         {% endblock header_custom_menu %}
+     </div>
+ {% endblock header_custom_menu_wrapper %}
+{% block content_header %}
+    <div class="container-fluid d-flex flex-column ">
+        {% block page_actions_wrapper %}
+
+
+            <div class="page-actions">{% block page_actions %}{% endblock %}</div>
+
+        {% endblock %}
+        <div class="content-header-title mt-3">
+            <h1 class="fs-5 fw-bolder">
+                {% block content_title %} {% endblock content_title %}
+            </h1>
+            {% block content_help %}
+                {% if has_help_message %}
+
+                {% endif %}
+            {% endblock content_help %}
+        </div>
+
+    </div>
+{% endblock content_header %}
+
+{% block body_javascript %}
+    {#    {{ stream_notifications(['/messages']) }} #}
+
+{% endblock body_javascript %}

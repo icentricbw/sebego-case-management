@@ -1,0 +1,18 @@
+{% extends 'Mails/email-base.html.twig' %}
+
+{% block content %}
+    <spacer size="18"></spacer>
+    <row>
+        <columns small="12">
+            <p>Good day {{ user.email }}</p>
+            <spacer size="18"></spacer>
+            <p>
+                Please use <strong style="color: #7a2931;">{{ user.emailAuthCode }}</strong> to complete signin  </a>
+            </p>
+        </columns>
+    </row>
+    <spacer size="18"></spacer>
+    <row  class="container-padding" >
+        <p>You are receiving this email because you requested to log in to the {{ appname }}</p>
+    </row>
+{% endblock %}

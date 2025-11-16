@@ -19,7 +19,6 @@ class MatterUpdate
     use SoftDeleteableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 
@@ -92,5 +91,10 @@ class MatterUpdate
         $this->eventDate = $eventDate;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->id->toBase58();
     }
 }

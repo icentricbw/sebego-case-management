@@ -21,12 +21,11 @@ class Matter
     use SoftDeleteableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $fileNumber = null;
+    #[ORM\Column(type: 'integer', unique: true)]
+    private ?int $fileNumber = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -42,14 +41,14 @@ class Matter
     private ?\DateTimeImmutable $closingDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'matters')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $leadLawyer = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $secretary = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
 
     #[ORM\Column(enumType: StatusType::class)]
@@ -430,5 +429,10 @@ class Matter
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->fileNumber.' '.$this->description;
     }
 }

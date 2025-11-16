@@ -1,0 +1,118 @@
+{# templates/admin/client/documents.html.twig #}
+
+{% if field.value is empty %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No documents uploaded for this client.
+    </div>
+{% else %}
+    <div class="mb-3">
+        <strong>Total Documents:</strong>
+        <span class="badge bg-primary">{{ field.value|length }}</span>
+    </div>
+
+    <div class="row">
+        {% for document in field.value %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        {# Document Type Badge #}
+                        <div class="mb-2">
+                            {% set badgeClass = {
+                                'CONTRACT': 'primary',
+                                'INVOICE': 'success',
+                                'RECEIPT': 'info',
+                                'LETTER': 'secondary',
+                                'COURT_DOCUMENT': 'warning',
+                                'EVIDENCE': 'danger',
+                                'OTHER': 'dark'
+                            } %}
+                            <span class="badge bg-{{ badgeClass[document.documentType.value] ?? 'secondary' }}">
+                                {{ document.documentType.value|replace({'_': ' '})|title }}
+                            </span>
+                        </div>
+
+                        {# File Icon and Name #}
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="me-3">
+                                {% set extension = document.imageName|split('.')|last|lower %}
+                                {% if extension in ['pdf'] %}
+                                    <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                                {% elseif extension in ['doc', 'docx'] %}
+                                    <i class="fas fa-file-word fa-3x text-primary"></i>
+                                {% elseif extension in ['xls', 'xlsx'] %}
+                                    <i class="fas fa-file-excel fa-3x text-success"></i>
+                                {% elseif extension in ['jpg', 'jpeg', 'png', 'gif'] %}
+                                    <i class="fas fa-file-image fa-3x text-info"></i>
+                                {% else %}
+                                    <i class="fas fa-file fa-3x text-secondary"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 text-truncate" title="{{ document.imageName }}">
+                                    {{ document.imageName|length > 25 ? document.imageName|slice(0, 25) ~ '...' : document.imageName }}
+                                </h6>
+                                <small class="text-muted">
+                                    {% if document.imageSize %}
+                                        {{ (document.imageSize / 1024)|number_format(2) }} KB
+                                    {% else %}
+                                        Size unknown
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+
+                        {# Upload Info #}
+                        <div class="mb-3">
+                            <small class="text-muted d-block">
+                                <i class="fas fa-calendar"></i>
+                                Uploaded: {{ document.uploadedAt ? document.uploadedAt|date('M d, Y H:i') : 'N/A' }}
+                            </small>
+                            {% if document.createdBy %}
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-user"></i>
+                                    By: {{ document.createdBy }}
+                                </small>
+                            {% endif %}
+                        </div>
+
+                        {# Action Buttons #}
+                        {# Action Buttons - Inline #}
+                        <div class="btn-group w-100" role="group">
+                            <a href="{{ vich_uploader_asset(document, 'imageFile') }}"
+                               class="btn btn-sm btn-outline-primary"
+                               target="_blank"
+                               title="View document">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ vich_uploader_asset(document, 'imageFile') }}"
+                               class="btn btn-sm btn-primary"
+                               download="{{ document.imageName }}"
+                               title="Download document">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    {# Card Footer with Metadata #}
+                    <div class="card-footer bg-light border-0">
+                        <small class="text-muted">
+                            <i class="fas fa-fingerprint"></i>
+                            ID: {{ document.id|slice(0, 8) }}...
+                        </small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{# Add Upload Button #}
+<div class="mt-3">
+    <a href="{{ ea_url()
+        .setController(ea.crud.controllerFqcn)
+        .setAction('edit')
+        .setEntityId(entity.primaryKeyValue) }}"
+       class="btn btn-success">
+        <i class="fas fa-plus"></i> Upload New Document
+    </a>
+</div>

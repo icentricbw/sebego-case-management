@@ -17,16 +17,16 @@
                 <tbody>
                     {% if field.value is not empty %}
                         {% for assignment in field.value %}
-                            <tr class="{{ assignment.isActive ? 'table-success' : '' }}">
+                            <tr>
                                 <td>{{ assignment.lawyer.fullName }}</td>
                                 <td>
-                                    {% if assignment.role.value == 'LEAD' %}
-                                        <span class="badge badge-primary">LEAD</span>
-                                    {% else %}
-                                        <span class="badge badge-secondary">SUPPORTING</span>
-                                    {% endif %}
+{#                                    {% if assignment.role.value == 'LEAD' %}#}
+{#                                        <span class="badge badge-primary">LEAD</span>#}
+{#                                    {% else %}#}
+{#                                        <span class="badge badge-secondary">SUPPORTING</span>#}
+{#                                    {% endif %}#}
                                 </td>
-                                <td>{{ assignment.assignedAt|date('Y-m-d') }}</td>
+{#                                <td>{{ assignment.assignedAt|date('Y-m-d') }}</td>#}
                                 <td>
                                     {% if assignment.unassignedAt %}
                                         {{ assignment.unassignedAt|date('Y-m-d') }}
@@ -35,11 +35,11 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if assignment.isActive %}
-                                        <span class="badge badge-success">Active</span>
-                                    {% else %}
-                                        <span class="badge badge-secondary">Inactive</span>
-                                    {% endif %}
+{#                                    {% if assignment.isActive %}#}
+{#                                        <span class="badge badge-success">Active</span>#}
+{#                                    {% else %}#}
+{#                                        <span class="badge badge-secondary">Inactive</span>#}
+{#                                    {% endif %}#}
                                 </td>
                             </tr>
                         {% endfor %}

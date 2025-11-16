@@ -1,0 +1,78 @@
+{% apply inky_to_html|inline_css(source('@css/foundation-emails.css')) %}
+    <style type="text/css">
+        body {
+            background-color: #F4F4F4;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+        .sebego-primary { color: #7a2931 !important; }
+        .sebego-bg-primary { background-color: #7a2931 !important; }
+        .urgency-critical { background-color: #f15776 !important; color: white !important; }
+        .urgency-high { background-color: #ffc35a !important; color: #333 !important; }
+        .urgency-medium { background-color: #16a7e9 !important; color: white !important; }
+        .urgency-low { background-color: #47ad77 !important; color: white !important; }
+
+        @media only screen and (max-width: 596px) {
+            .small-float-center { margin: 0 auto !important; float: none !important; text-align: center !important; }
+            .small-text-center { text-align: center !important; }
+            .small-text-left { text-align: left !important; }
+            .small-text-right { text-align: right !important; }
+            .hide-for-large { display: block !important; width: auto !important; overflow: visible !important; max-height: none !important; font-size: inherit !important; line-height: inherit !important; }
+            table.body table.container .hide-for-large * { mso-hide: all; }
+            .show-for-large { display: none !important; width: 0; mso-hide: all; overflow: hidden; }
+        }
+    </style>
+
+    <wrapper class="body">
+        <container>
+            <row>
+                <columns small="12">
+                    <spacer size="24"></spacer>
+                    <row>
+                        <columns small="6">
+                            <h3 class="sebego-primary" style="margin: 0;">⚖️ {{ appname|default('Sebego Legal') }}</h3>
+                        </columns>
+                        <columns small="6" valign="middle">
+                            <p class="text-right small-text-center" style="margin: 0; font-size: 12px; color: #666;">
+                                Need help? <a href="mailto:{{ support_email|default('support@sebego.co.bw') }}">Contact Support</a>
+                            </p>
+                        </columns>
+                    </row>
+                    <spacer size="16"></spacer>
+                    <hr/>
+                </columns>
+            </row>
+        </container>
+
+        <container>
+            <row>
+                <columns small="12">
+                    {% block content %}
+                    {% endblock %}
+                </columns>
+            </row>
+        </container>
+
+        <spacer size="32"></spacer>
+
+        <container>
+            <row>
+                <columns small="12">
+                    <hr/>
+                    <spacer size="16"></spacer>
+                    <center>
+                        <p style="font-size: 12px; color: #8a8a8a; margin-bottom: 4px;">
+                            This is an automated message from Sebego Legal Case Management System
+                        </p>
+                        <p style="font-size: 12px; color: #8a8a8a;">
+                            &copy; {{ "now"|date("Y") }} {{ appname|default('Sebego Legal Services') }}. All rights reserved.
+                        </p>
+                    </center>
+                    <spacer size="16"></spacer>
+                </columns>
+            </row>
+        </container>
+    </wrapper>
+{% endapply %}

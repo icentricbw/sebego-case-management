@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sebego Legal - Case Management{% endblock %}
+
+{% block body %}
+    <div class="min-vh-100 d-flex flex-column">
+        <!-- Header -->
+        <header class="bg-white shadow-sm py-3">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="/">
+                        <img src="https://sebegoattorneys.com/wp-content/uploads/2021/02/Retina-SA-AM.png"
+                             alt="Sebego Attorneys"
+                             style="height: 50px;">
+                    </a>
+                    <a href="{{ path('app_login') }}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow-1 d-flex align-items-center" style="background: linear-gradient(135deg, #f5f6fa 0%, #e9ecef 100%);">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="display-3 fw-bold mb-4" style="color: #7a2931;">
+                            Sebego Legal
+                        </h1>
+                        <h2 class="h4 text-muted mb-5">
+                            Case Management System
+                        </h2>
+
+                        <p class="lead mb-5 text-muted">
+                            Professional legal practice management solution for Botswana law firms.
+                            Manage your matters, clients, tasks, and documents efficiently.
+                        </p>
+
+                        <a href="{{ path('app_login') }}"
+                           class="btn btn-lg px-5 py-3"
+                           style="background: #7a2931; color: white; border-radius: 50px;">
+                            <i class="fas fa-rocket me-2"></i>
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0">&copy; {{ "now"|date("Y") }} Sebego Attorneys</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <a href="https://sebegoattorneys.com" class="text-white-50 text-decoration-none">
+                            Visit Website
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <style>
+        .btn-primary {
+            background-color: #7a2931;
+            border-color: #7a2931;
+        }
+        .btn-primary:hover {
+            background-color: #5a1f25;
+            border-color: #5a1f25;
+        }
+    </style>
+{% endblock %}

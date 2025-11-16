@@ -18,7 +18,6 @@ class Archive
     use SoftDeleteableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 
@@ -26,19 +25,19 @@ class Archive
     #[ORM\JoinColumn(nullable: false)]
     private ?Matter $matter = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $boxNumber = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $room = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $cabinet = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $shelf = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $location = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -46,6 +45,9 @@ class Archive
 
     #[ORM\Column]
     private ?\DateTimeImmutable $archivedDate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $batch = null;
 
     public function __construct()
     {
@@ -149,6 +151,18 @@ class Archive
     public function setArchivedDate(\DateTimeImmutable $archivedDate): static
     {
         $this->archivedDate = $archivedDate;
+
+        return $this;
+    }
+
+    public function getBatch(): ?string
+    {
+        return $this->batch;
+    }
+
+    public function setBatch(string $batch): static
+    {
+        $this->batch = $batch;
 
         return $this;
     }

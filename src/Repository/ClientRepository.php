@@ -16,28 +16,53 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
-    //    /**
-    //     * @return Client[] Returns an array of Client objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Get total clients count
+     */
+    public function getTotalClientsCount(): int
+    {
+        return $this->count([]);
+    }
 
-    //    public function findOneBySomeField($value): ?Client
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Get recent clients
+     */
+    public function getRecentClients(int $limit = 10): array
+    {
+        return $this->findBy(
+            [],
+            ['createdAt' => 'DESC'],
+            $limit
+        );
+    }
+
+    /**
+     * Get clients created this week
+     */
+    public function getClientsThisWeek(\DateTimeImmutable $weekStart, \DateTimeImmutable $weekEnd): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.createdAt >= :weekStart')
+            ->andWhere('c.createdAt <= :weekEnd')
+            ->orderBy('c.createdAt', 'DESC')
+            ->setParameter('weekStart', $weekStart)
+            ->setParameter('weekEnd', $weekEnd)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Get clients count created this week
+     */
+    public function getClientsThisWeekCount(\DateTimeImmutable $weekStart, \DateTimeImmutable $weekEnd): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('c.createdAt >= :weekStart')
+            ->andWhere('c.createdAt <= :weekEnd')
+            ->setParameter('weekStart', $weekStart)
+            ->setParameter('weekEnd', $weekEnd)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

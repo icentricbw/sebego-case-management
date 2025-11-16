@@ -53,11 +53,11 @@ class MatterUpdateCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->onlyOnIndex();
-
-        yield AssociationField::new('matter')
-            ->setColumns(6)
-            ->setRequired(true)
-            ->autocomplete();
+//
+//        yield AssociationField::new('matter')
+//            ->setColumns(6)
+//            ->setRequired(true)
+//            ->autocomplete();
 
         yield ChoiceField::new('updateType')
             ->setColumns(6)

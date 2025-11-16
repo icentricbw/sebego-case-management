@@ -1,0 +1,133 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block content %}
+    <spacer size="24"></spacer>
+
+    {# Greeting #}
+    <row>
+        <columns>
+            <h4 style="margin: 0 0 8px 0;">Hello {{ user.firstName ?? user.email }},</h4>
+        </columns>
+    </row>
+
+    <spacer size="16"></spacer>
+
+    {# Alert Message #}
+    <row>
+        <columns>
+            {% if isOverdue %}
+                <callout class="alert">
+                    <p style="margin: 0; font-weight: bold;">
+                        ⚠️ You have <strong>{{ tasks|length }}</strong> overdue task(s) that require immediate attention.
+                    </p>
+                </callout>
+            {% else %}
+                <p style="font-size: 15px; margin: 0;">
+                    You have <strong style="color: #7a2931;">{{ tasks|length }}</strong> task(s)
+                    <strong>{{ timeframeLabel }}</strong>.
+                </p>
+            {% endif %}
+        </columns>
+    </row>
+
+    <spacer size="20"></spacer>
+
+    {# Summary Box #}
+    <row>
+        <columns>
+            <callout class="{{ isOverdue ? 'alert' : 'primary' }}">
+                <center>
+                    <span class="urgency-{{ urgency }}" style="display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; text-transform: uppercase; font-size: 12px;">
+                        {{ isOverdue ? 'OVERDUE' : timeframeLabel }}
+                    </span>
+                    <p style="margin: 12px 0 0 0; font-size: 14px;">
+                        <strong>Total Tasks:</strong> {{ tasks|length }}
+                    </p>
+                </center>
+            </callout>
+        </columns>
+    </row>
+
+    <spacer size="24"></spacer>
+
+    {# Section Header #}
+    <row>
+        <columns>
+            <h4 class="sebego-primary">📋 Task Details:</h4>
+        </columns>
+    </row>
+
+    <spacer size="16"></spacer>
+
+    {# Task List #}
+    {% for task in tasks %}
+        <row>
+            <columns>
+                <callout class="{{ isOverdue ? 'alert' : '' }}" style="border-left: 4px solid {{ isOverdue ? '#f15776' : '#7a2931' }};">
+                    <h5 style="margin: 0 0 12px 0; color: #7a2931;">
+                        {{ loop.index }}. {{ task.title }}
+                    </h5>
+
+                    <p style="margin: 4px 0; font-size: 14px;">
+                        <strong>📅 Due Date:</strong> {{ task.dueDate|date('l, F j, Y \\a\\t g:i A') }}
+                        {% if isOverdue %}
+                            <span style="color: #f15776; font-weight: bold;">
+                                (Overdue)
+                            </span>
+                        {% endif %}
+                    </p>
+
+                    {% if task.matter %}
+                        <p style="margin: 4px 0; font-size: 14px;">
+                            <strong>📁 Matter:</strong>
+                            {{ task.matter.fileNumber }}
+                            {% if task.matter.description %}
+                                - {{ task.matter.description|slice(0, 50) }}{{ task.matter.description|length > 50 ? '...' : '' }}
+                            {% endif %}
+                        </p>
+                    {% endif %}
+
+                    {% if task.description %}
+                        <spacer size="8"></spacer>
+                        <p style="margin: 0; padding-top: 8px; border-top: 1px solid #e0e0e0; font-size: 14px; color: #666;">
+                            {{ task.description }}
+                        </p>
+                    {% endif %}
+                </callout>
+            </columns>
+        </row>
+
+        {% if not loop.last %}
+            <spacer size="12"></spacer>
+        {% endif %}
+    {% endfor %}
+
+    <spacer size="32"></spacer>
+
+    {# Call to Action #}
+    <row>
+        <columns>
+            <center>
+                <button class="primary large expand" href="https://sebego.co.bw/admin">
+                    📋 View All Tasks in Sebego
+                </button>
+            </center>
+        </columns>
+    </row>
+
+    <spacer size="24"></spacer>
+
+    {# Tip Box #}
+    <row>
+        <columns>
+            <callout class="warning">
+                <p style="margin: 0;">
+                    <strong>💡 Tip:</strong> Stay organized by updating task statuses as you complete them.
+                    This helps your team stay informed about case progress.
+                </p>
+            </callout>
+        </columns>
+    </row>
+
+    <spacer size="24"></spacer>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'emails/email-base.html.twig' %}
+
+{% block content %}
+    <spacer size="18"></spacer>
+    <row>
+        <columns small="12">
+            <p>Good day {{ user.email }}</p>
+            <spacer size="18"></spacer>
+            <p>To reset your password, please visit the following link</p>
+            <spacer size="18"></spacer>
+
+            <p> <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">
+                    {{ url('app_reset_password', {token: resetToken.token}) }}
+                </a> If you didn't request a new password, you can safely delete this email</p>
+
+            <p>This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+        </columns>
+    </row>
+    <spacer size="18"></spacer>
+    <row  class="container-padding" >
+        <p>You are receiving this email because you claim to have forgotten your password from {{ appname }}</p>
+    </row>
+{% endblock %}
+
+

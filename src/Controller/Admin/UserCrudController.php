@@ -82,33 +82,18 @@ class UserCrudController extends AbstractCrudController
             ->setColumns(4)
             ->setRequired(true);
 
-        yield TelephoneField::new('phoneNumber')
-            ->setColumns(4);
-
-        yield ChoiceField::new('userType')
-            ->setColumns(6)
-            ->setChoices([
-                'Lawyer' => 'LAWYER',
-                'Secretary' => 'SECRETARY',
-                'Admin' => 'ADMIN',
-            ])
-            ->renderAsBadges([
-                'LAWYER' => 'success',
-                'SECRETARY' => 'info',
-                'ADMIN' => 'danger',
-            ])
-            ->setRequired(true);
-
         yield BooleanField::new('isActive')
             ->setColumns(6)
             ->renderAsSwitch(false);
 
-        yield ArrayField::new('roles')
-            ->hideOnIndex()
-            ->setHelp('e.g., ROLE_ADMIN, ROLE_LAWYER, ROLE_SECRETARY');
+        $roles = ['ROLE_SUPER_ADMIN',
+            'ROLE_ADMIN',
+            'ROLE_SECRETARY',
+            'ROLE_ATTORNEY','ROLE_CLIENT','ROLE_REP','ROLE_FINANCE'];
+        yield ChoiceField::new('roles')
+            ->setChoices(array_combine($roles, $roles))
+            ->allowMultipleChoices()
+            ->renderExpanded()->renderAsBadges();
 
-        // Display full name on index
-        yield TextField::new('fullName', 'Name')
-            ->onlyOnIndex();
     }
 }

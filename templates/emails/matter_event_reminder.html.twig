@@ -1,0 +1,186 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block content %}
+    <spacer size="24"></spacer>
+
+    {# Greeting #}
+    <row>
+        <columns>
+            <h4 style="margin: 0 0 8px 0;">Hello {{ user.firstName ?? user.email }},</h4>
+        </columns>
+    </row>
+
+    <spacer size="16"></spacer>
+
+    {# Introduction #}
+    <row>
+        <columns>
+            <p style="font-size: 15px; margin: 0;">
+                You have <strong style="color: #7a2931;">{{ events|length }}</strong> upcoming matter event(s)
+                scheduled for <strong>{{ timeframeLabel }}</strong>.
+            </p>
+        </columns>
+    </row>
+
+    <spacer size="20"></spacer>
+
+    {# Summary Box #}
+    <row>
+        <columns>
+            <callout class="primary">
+                <center>
+                    <span class="urgency-{{ urgency }}" style="display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; text-transform: uppercase; font-size: 12px;">
+                        {{ timeframeLabel|upper }}
+                    </span>
+
+                    <spacer size="16"></spacer>
+
+                    <row>
+                        <columns small="6">
+                            <h2 style="margin: 0; color: #7a2931;">{{ events|length }}</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; text-transform: uppercase; color: #666;">
+                                Event{{ events|length > 1 ? 's' : '' }}
+                            </p>
+                        </columns>
+                        <columns small="6">
+                            <h2 style="margin: 0; color: #7a2931;">{{ events|map(e => e.matter.fileNumber)|unique|length }}</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; text-transform: uppercase; color: #666;">
+                                Matter{{ events|map(e => e.matter.fileNumber)|unique|length > 1 ? 's' : '' }}
+                            </p>
+                        </columns>
+                    </row>
+                </center>
+            </callout>
+        </columns>
+    </row>
+
+    <spacer size="24"></spacer>
+
+    {# Section Header #}
+    <row>
+        <columns>
+            <h4 class="sebego-primary">📅 Upcoming Events:</h4>
+        </columns>
+    </row>
+
+    <spacer size="16"></spacer>
+
+    {# Event List #}
+    {% for event in events %}
+        <row>
+            <columns>
+                <callout style="border-left: 4px solid #7a2931;">
+                    {# Event Header with Date Badge #}
+                    <row>
+                        <columns small="8">
+                            <h5 style="margin: 0 0 8px 0; color: #7a2931;">
+                                {{ event.title ?? 'Matter Event' }}
+                            </h5>
+                            {% if event.updateType %}
+                                <span style="display: inline-block; padding: 4px 10px; background-color: #e9ecef; border-radius: 12px; font-size: 11px; font-weight: 500;">
+                                    {{ event.updateType.value|replace({'_': ' '})|title }}
+                                </span>
+                            {% endif %}
+                        </columns>
+                        <columns small="4">
+                            <callout class="primary" style="text-align: center; padding: 8px;">
+                                <p style="margin: 0; font-size: 24px; font-weight: bold; line-height: 1;">
+                                    {{ event.eventDate|date('d') }}
+                                </p>
+                                <p style="margin: 0; font-size: 11px;">
+                                    {{ event.eventDate|date('M Y') }}
+                                </p>
+                                <p style="margin: 4px 0 0 0; font-size: 13px;">
+                                    {{ event.eventDate|date('g:i A') }}
+                                </p>
+                            </callout>
+                        </columns>
+                    </row>
+
+                    <spacer size="12"></spacer>
+
+                    {# Matter Info #}
+                    {% if event.matter %}
+                        <callout class="secondary" style="background-color: #f8f9fa;">
+                            <p style="margin: 0 0 4px 0; font-weight: bold; color: #7a2931; font-size: 13px;">
+                                📁 Matter: {{ event.matter.fileNumber }}
+                            </p>
+                            <p style="margin: 0; font-size: 13px; color: #666;">
+                                {{ event.matter.description|slice(0, 100) }}{{ event.matter.description|length > 100 ? '...' : '' }}
+                            </p>
+                            {% if event.matter.caseType %}
+                                <spacer size="8"></spacer>
+                                <span style="display: inline-block; padding: 4px 8px; background-color: #e9ecef; border-radius: 4px; font-size: 11px;">
+                                    {{ event.matter.caseType.name }}
+                                </span>
+                            {% endif %}
+                        </callout>
+                    {% endif %}
+
+                    <spacer size="12"></spacer>
+
+                    {# Event Details #}
+                    <p style="margin: 4px 0; font-size: 14px;">
+                        <strong>🕐 Date & Time:</strong><br>
+                        {{ event.eventDate|date('l, F j, Y \\a\\t g:i A') }}
+                    </p>
+
+                    {% if event.location %}
+                        <p style="margin: 4px 0; font-size: 14px;">
+                            <strong>📍 Location:</strong><br>
+                            {{ event.location }}
+                        </p>
+                    {% endif %}
+
+                    {% if event.description %}
+                        <p style="margin: 4px 0; font-size: 14px;">
+                            <strong>📝 Details:</strong><br>
+                            {{ event.description }}
+                        </p>
+                    {% endif %}
+
+                    {% if event.matter.leadLawyer %}
+                        <p style="margin: 4px 0; font-size: 14px;">
+                            <strong>👤 Lead Lawyer:</strong><br>
+                            {{ event.matter.leadLawyer.firstName }} {{ event.matter.leadLawyer.lastName }}
+                        </p>
+                    {% endif %}
+                </callout>
+            </columns>
+        </row>
+
+        {% if not loop.last %}
+            <spacer size="16"></spacer>
+        {% endif %}
+    {% endfor %}
+
+    <spacer size="32"></spacer>
+
+    {# Call to Action #}
+    <row>
+        <columns>
+            <center>
+                <button class="primary large expand" href="https://sebego.co.bw/admin">
+                    📋 View All Matters in Sebego
+                </button>
+            </center>
+        </columns>
+    </row>
+
+    <spacer size="24"></spacer>
+
+    {# Tip Box #}
+    <row>
+        <columns>
+            <callout class="warning">
+                <p style="margin: 0;">
+                    <strong>💡 Preparation Tip:</strong>
+                    Review all case files and ensure all necessary documents are prepared before the event.
+                    Confirm attendance with all relevant parties.
+                </p>
+            </callout>
+        </columns>
+    </row>
+
+    <spacer size="24"></spacer>
+{% endblock %}
