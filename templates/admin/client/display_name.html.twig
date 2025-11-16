@@ -1,0 +1,25 @@
+<div class="d-flex align-items-center">
+    <div class="me-3">
+        {% if entity.instance.clientType.value == 'OMANG' %}
+            <i class="fa fa-user fa-2x text-primary"></i>
+        {% else %}
+            <i class="fa fa-building fa-2x text-info"></i>
+        {% endif %}
+    </div>
+    <div>
+        <strong>{{ field.value }}</strong><br>
+        <small class="text-muted">
+            {% if entity.instance.clientType.value == 'OMANG' %}
+                <span class="badge badge-primary">Individual</span>
+                {% if entity.instance.identificationNumber %}
+                    {{ entity.instance.identificationNumber }}
+                {% endif %}
+            {% else %}
+                <span class="badge badge-info">Organization</span>
+                {% if entity.instance.registrationNumber %}
+                    {{ entity.instance.registrationNumber }}
+                {% endif %}
+            {% endif %}
+        </small>
+    </div>
+</div>

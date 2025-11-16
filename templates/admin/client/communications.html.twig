@@ -1,0 +1,78 @@
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0">Recent Communication History</h6>
+    </div>
+    <div class="list-group list-group-flush">
+        {% if field.value is not empty %}
+            {% for comm in field.value|slice(0, 15) %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="mb-2">
+                                {% set commType = comm.communicationType.value %}
+                                {% if commType == 'MEETING' %}
+                                    <span class="badge badge-primary">
+                                        <i class="fa fa-users"></i> {{ commType|replace({'_': ' '}) }}
+                                    </span>
+                                {% elseif commType == 'PHONE_CALL' %}
+                                    <span class="badge badge-success">
+                                        <i class="fa fa-phone"></i> {{ commType|replace({'_': ' '}) }}
+                                    </span>
+                                {% elseif commType == 'EMAIL' %}
+                                    <span class="badge badge-info">
+                                        <i class="fa fa-envelope"></i> {{ commType|replace({'_': ' '}) }}
+                                    </span>
+                                {% elseif commType == 'VIDEO_CALL' %}
+                                    <span class="badge badge-warning">
+                                        <i class="fa fa-video"></i> {{ commType|replace({'_': ' '}) }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-secondary">
+                                        <i class="fa fa-comment"></i> {{ commType|replace({'_': ' '}) }}
+                                    </span>
+                                {% endif %}
+                                
+                                <small class="text-muted ms-2">
+                                    <i class="fa fa-calendar"></i> {{ comm.communicationDate|date('Y-m-d') }}
+                                </small>
+                                
+                                {% if comm.durationMinutes %}
+                                    <small class="text-muted ms-2">
+                                        <i class="fa fa-clock"></i> {{ comm.durationMinutes }} min
+                                    </small>
+                                {% endif %}
+                            </div>
+                            
+                            <h6 class="mb-1">{{ comm.subject }}</h6>
+                            
+                            <p class="mb-1 text-muted">
+                                {% if comm.summary|length > 150 %}
+                                    {{ comm.summary|slice(0, 150) }}...
+                                {% else %}
+                                    {{ comm.summary }}
+                                {% endif %}
+                            </p>
+                            
+                            <small class="text-muted">
+                                Recorded by {{ comm.recordedBy.fullName }}
+                                {% if comm.matter %}
+                                    | Matter: {{ comm.matter.fileNumber }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% if field.value|length > 15 %}
+                <div class="list-group-item text-center text-muted">
+                    <small>Showing 15 most recent of {{ field.value|length }} total communications</small>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="list-group-item text-center text-muted">
+                No communication history recorded
+            </div>
+        {% endif %}
+    </div>
+</div>

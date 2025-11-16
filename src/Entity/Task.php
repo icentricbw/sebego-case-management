@@ -155,4 +155,12 @@ class Task
 
         return $this;
     }
+
+    public function isOverdue(): bool
+    {
+        if ($this->dueDate === null || $this->taskStatusType === TaskStatusType::TASK_STATUS_COMPLETED) {
+            return false;
+        }
+        return $this->dueDate < new \DateTimeImmutable('today');
+    }
 }

@@ -1,0 +1,55 @@
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0">Lawyer Assignment History</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Lawyer</th>
+                        <th>Role</th>
+                        <th>Assigned</th>
+                        <th>Unassigned</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if field.value is not empty %}
+                        {% for assignment in field.value %}
+                            <tr class="{{ assignment.isActive ? 'table-success' : '' }}">
+                                <td>{{ assignment.lawyer.fullName }}</td>
+                                <td>
+                                    {% if assignment.role.value == 'LEAD' %}
+                                        <span class="badge badge-primary">LEAD</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">SUPPORTING</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ assignment.assignedAt|date('Y-m-d') }}</td>
+                                <td>
+                                    {% if assignment.unassignedAt %}
+                                        {{ assignment.unassignedAt|date('Y-m-d') }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if assignment.isActive %}
+                                        <span class="badge badge-success">Active</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No lawyer assignment history</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

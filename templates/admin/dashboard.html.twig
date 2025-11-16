@@ -1,0 +1,65 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    <h1 class="mb-3">Sebego Legal Case Management System</h1>
+{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Matters</h5>
+                    <p class="card-text display-4">{{ activeMatters ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Clients</h5>
+                    <p class="card-text display-4">{{ totalClients ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Tasks</h5>
+                    <p class="card-text display-4">{{ pendingTasks ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Overdue Tasks</h5>
+                    <p class="card-text display-4">{{ overdueTasks ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Matters</h5>
+                </div>
+                <div class="card-body">
+                    <p>Recent matters will appear here...</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Upcoming Tasks</h5>
+                </div>
+                <div class="card-body">
+                    <p>Upcoming tasks will appear here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

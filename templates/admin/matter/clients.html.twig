@@ -1,0 +1,51 @@
+<div class="table-responsive">
+    <table class="table table-hover table-sm">
+        <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Type</th>
+                <th>Role</th>
+                <th>Contact</th>
+                <th>Linked</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if field.value is not empty %}
+                {% for matterClient in field.value %}
+                    <tr>
+                        <td>
+                            <strong>{{ matterClient.client.displayName }}</strong>
+                        </td>
+                        <td>
+                            {% if matterClient.client.clientType.value == 'OMANG' %}
+                                <span class="badge badge-primary">Individual</span>
+                            {% else %}
+                                <span class="badge badge-info">Organization</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if matterClient.clientRole %}
+                                <span class="badge badge-secondary">{{ matterClient.clientRole.value }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if matterClient.client.email %}
+                                <div><i class="fa fa-envelope"></i> {{ matterClient.client.email }}</div>
+                            {% endif %}
+                            {% if matterClient.client.primaryPhone %}
+                                <div><i class="fa fa-phone"></i> {{ matterClient.client.primaryPhone }}</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ matterClient.linkedAt|date('Y-m-d') }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">No clients linked to this matter</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
