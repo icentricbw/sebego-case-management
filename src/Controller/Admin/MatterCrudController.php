@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Matter;
 use App\Enum\StatusType;
+use App\Form\MatterClientType;
 use App\Repository\MatterRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -113,6 +114,30 @@ class MatterCrudController extends AbstractCrudController
             ->setFormTypeOption('disabled', true) // Make it read-only
             ->setHelp('Auto-generated file number');
 
+        // **CLIENT RELATIONSHIPS** - This is what was missing!
+        yield AssociationField::new('matterClients', 'Clients')
+            ->onlyOnDetail()
+            ->setTemplatePath('admin/matter/clients.html.twig');
+
+        // Show on forms
+        yield CollectionField::new('matterClients', 'Clients')
+            ->onlyOnForms()
+            ->setEntryType(MatterClientType::class)
+            ->setFormTypeOption('by_reference', false)
+            ->allowAdd()
+            ->allowDelete()
+            ->setColumns(6)
+            ->setHelp('Add clients and specify their role in this matter');
+
+        yield AssociationField::new('matterLawyers', 'Assigned Lawyers')
+            ->onlyOnDetail()
+            ->setTemplatePath('admin/matter/lawyers.html.twig');
+
+        // Supporting Lawyers
+        yield AssociationField::new('matterLawyers', 'Supporting Lawyers')
+            ->onlyOnDetail()
+            ->setTemplatePath('admin/matter/lawyers.html.twig');
+
         yield ChoiceField::new('statusType')
             ->setColumns(6)
             ->setChoices([
@@ -160,13 +185,11 @@ class MatterCrudController extends AbstractCrudController
             ->setColumns(12)
             ->onlyOnForms();
 
-        yield AssociationField::new('matterClients', 'Clients')
+        /*yield AssociationField::new('matterClients', 'Clients')
             ->onlyOnDetail()
-            ->setTemplatePath('admin/matter/clients.html.twig');
+            ->setTemplatePath('admin/matter/clients.html.twig');*/
 
-        yield AssociationField::new('matterLawyers', 'Assigned Lawyers')
-            ->onlyOnDetail()
-            ->setTemplatePath('admin/matter/lawyers.html.twig');
+
 
         yield AssociationField::new('matterUpdates', 'Recent Updates')
             ->onlyOnDetail()

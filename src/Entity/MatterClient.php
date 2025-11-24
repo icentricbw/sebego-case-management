@@ -77,4 +77,13 @@ class MatterClient
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return sprintf(
+            '%s - %s',
+            $this->client?->getFullName() ?? $this->client?->getCompanyName() ?? 'Unknown Client',
+            $this->clientRole?->value ?? 'No Role'
+        );
+    }
 }
