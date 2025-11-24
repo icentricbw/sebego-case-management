@@ -69,6 +69,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isActive = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $mustChangePassword = true;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $lastPasswordChange = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $lastLoginAt = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $tempPassword = null;
+
 
     public function __construct()
     {
@@ -313,6 +325,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->isActive = $isActive;
 
+        return $this;
+    }
+
+    public function isMustChangePassword(): bool
+    {
+        return $this->mustChangePassword;
+    }
+
+    public function setMustChangePassword(bool $mustChangePassword): static
+    {
+        $this->mustChangePassword = $mustChangePassword;
+        return $this;
+    }
+
+    public function getLastPasswordChange(): ?\DateTimeImmutable
+    {
+        return $this->lastPasswordChange;
+    }
+
+    public function setLastPasswordChange(?\DateTimeImmutable $lastPasswordChange): static
+    {
+        $this->lastPasswordChange = $lastPasswordChange;
+        return $this;
+    }
+
+    public function getLastLoginAt(): ?\DateTimeImmutable
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function setLastLoginAt(?\DateTimeImmutable $lastLoginAt): static
+    {
+        $this->lastLoginAt = $lastLoginAt;
+        return $this;
+    }
+
+    public function getTempPassword(): ?string
+    {
+        return $this->tempPassword;
+    }
+
+    public function setTempPassword(?string $tempPassword): static
+    {
+        $this->tempPassword = $tempPassword;
         return $this;
     }
 

@@ -16,28 +16,52 @@ class MatterClientRepository extends ServiceEntityRepository
         parent::__construct($registry, MatterClient::class);
     }
 
-    //    /**
-    //     * @return MatterClient[] Returns an array of MatterClient objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Get all clients for a specific matter
+     */
+    public function findByMatter(string $matterId): array
+    {
+        return $this->createQueryBuilder('mc')
+            ->leftJoin('mc.client', 'c')
+            ->addSelect('c')
+            ->where('mc.matter = :matterId')
+            ->setParameter('matterId', $matterId)
+            ->orderBy('mc.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?MatterClient
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Get all matters for a specific client
+     */
+    public function findByClient(string $clientId): array
+    {
+        return $this->createQueryBuilder('mc')
+            ->leftJoin('mc.matter', 'm')
+            ->addSelect('m')
+            ->where('mc.client = :clientId')
+            ->setParameter('clientId', $clientId)
+            ->orderBy('mc.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Check if a client is already linked to a matter with a specific role
+     */
+    public function existsByMatterClientAndRole(string $matterId, string $clientId, string $role): bool
+    {
+        $result = $this->createQueryBuilder('mc')
+            ->select('COUNT(mc.id)')
+            ->where('mc.matter = :matterId')
+            ->andWhere('mc.client = :clientId')
+            ->andWhere('mc.clientRole = :role')
+            ->setParameter('matterId', $matterId)
+            ->setParameter('clientId', $clientId)
+            ->setParameter('role', $role)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $result > 0;
+    }
 }

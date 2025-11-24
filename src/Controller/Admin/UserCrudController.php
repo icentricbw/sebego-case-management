@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
@@ -18,9 +19,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return User::class;
@@ -67,12 +74,18 @@ class UserCrudController extends AbstractCrudController
             ->setColumns(6)
             ->setRequired(true);
 
-        yield TextField::new('password')
+        /*yield TextField::new('password')
             ->setFormType(PasswordType::class)
             ->setColumns(6)
             ->setRequired($pageName === Crud::PAGE_NEW)
             ->onlyOnForms()
-            ->setHelp('Leave blank to keep current password');
+            ->setHelp('Leave blank to keep current password');*/
+        yield TextField::new('tempPassword', 'Initial Password')
+            ->setFormType(PasswordType::class)
+            ->setColumns(6)
+            ->onlyOnForms()
+            ->setHelp('Set an initial password. User will be required to change it on first login.')
+            ->setRequired($pageName === Crud::PAGE_NEW);
 
         yield TextField::new('firstName')
             ->setColumns(4)
@@ -95,5 +108,60 @@ class UserCrudController extends AbstractCrudController
             ->allowMultipleChoices()
             ->renderExpanded()->renderAsBadges();
 
+        yield BooleanField::new('mustChangePassword', 'Must Change Password')
+            ->setColumns(3)
+            ->setHelp('If enabled, user will be forced to change password on next login');
+
+        yield DateTimeField::new('lastPasswordChange')
+            ->hideOnForm()
+            ->onlyOnDetail();
+
+        yield DateTimeField::new('lastLoginAt')
+            ->hideOnForm()
+            ->onlyOnDetail();
+
+    }
+
+    public function persistEntity($entityManager, $entityInstance): void
+    {
+        /** @var User $entityInstance */
+        if ($entityInstance instanceof User) {
+            // Hash the temporary password
+            $tempPassword = $entityInstance->getTempPassword();
+            if ($tempPassword) {
+                $hashedPassword = $this->passwordHasher->hashPassword(
+                    $entityInstance,
+                    $tempPassword
+                );
+                $entityInstance->setPassword($hashedPassword);
+
+                // Force password change on first login
+                $entityInstance->setMustChangePassword(true);
+            }
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity($entityManager, $entityInstance): void
+    {
+        /** @var User $entityInstance */
+        if ($entityInstance instanceof User) {
+            // Only hash password if temp password was provided
+            $tempPassword = $entityInstance->getTempPassword();
+            if ($tempPassword) {
+                $hashedPassword = $this->passwordHasher->hashPassword(
+                    $entityInstance,
+                    $tempPassword
+                );
+                $entityInstance->setPassword($hashedPassword);
+
+                // Force password change
+                $entityInstance->setMustChangePassword(true);
+                $entityInstance->setTempPassword(null);
+            }
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }
