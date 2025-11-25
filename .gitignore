@@ -23,3 +23,6 @@
 ###< symfonycasts/sass-bundle ###
 /config/secrets/prod/prod.DATABASE_USER.4d7edf.php
 /config/secrets/
+/.env
+/.env.dev
+/.env.prod
