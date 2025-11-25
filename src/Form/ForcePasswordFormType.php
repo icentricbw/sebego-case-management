@@ -2,16 +2,18 @@
 
 namespace App\Form;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
 
-class ForcePasswordFormType
+class ForcePasswordFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -63,6 +65,9 @@ class ForcePasswordFormType
                     ]),
                     new NotCompromisedPassword([
                         'message' => 'This password has been leaked in a data breach. Please use a different password.',
+                    ]),
+                    new UserPassword([
+                        'message' => 'Wrong value for your current password',
                     ]),
                 ],
             ])

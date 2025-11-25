@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,8 +24,10 @@ class AppSebegoAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager
+    ) {
     }
 
     public function authenticate(Request $request): Passport
@@ -42,13 +46,42 @@ class AppSebegoAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    /*public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
 
         // For example:
+        return new RedirectResponse($this->urlGenerator->generate('admin'));
+    }*/
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    {
+        $user = $token->getUser();
+
+        // Update last login timestamp
+        if ($user instanceof User) {
+            $user->setLastLoginAt(new \DateTimeImmutable());
+            $this->entityManager->flush();
+
+            // Check if user must change password
+            if ($user->isMustChangePassword()) {
+                $request->getSession()->getFlashBag()->add(
+                    'warning',
+                    'For security reasons, you must change your password before continuing.'
+                );
+
+                return new RedirectResponse($this->urlGenerator->generate('app_change_password'));
+            }
+        }
+
+        // Check for target path (where user was trying to go before login)
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+
+        // Default redirect to admin dashboard
         return new RedirectResponse($this->urlGenerator->generate('admin'));
     }
 

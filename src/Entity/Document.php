@@ -123,6 +123,6 @@ class Document
 
     public function __toString(): string
     {
-        return $this->imageName;
+        return $this->imageName ?? 'Document';
     }
 }

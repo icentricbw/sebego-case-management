@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FileMovementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Blameable\Traits\BlameableEntity;
@@ -31,20 +33,28 @@ class FileMovement
     #[ORM\ManyToOne(inversedBy: 'fileMovements')]
     private ?User $fromUser = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $fromLocation = null;
+   /* #[ORM\Column(length: 255)]
+    private ?string $fromLocation = null;*/
 
     #[ORM\ManyToOne]
     private ?User $toUser = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $toLocation = null;
+    /*#[ORM\Column(length: 255)]
+    private ?string $toLocation = null;*/
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $purpose = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $notes = null;
+
+    #[ORM\ManyToOne(inversedBy: 'movementsFrom')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Location $fromLocation = null;
+
+    #[ORM\ManyToOne(inversedBy: 'movementsTo')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
+    private ?Location $toLocation = null;
 
     public function __construct()
     {
@@ -92,7 +102,7 @@ class FileMovement
         return $this;
     }
 
-    public function getFromLocation(): ?string
+    /*public function getFromLocation(): ?string
     {
         return $this->fromLocation;
     }
@@ -102,7 +112,7 @@ class FileMovement
         $this->fromLocation = $fromLocation;
 
         return $this;
-    }
+    }*/
 
     public function getToUser(): ?User
     {
@@ -116,7 +126,7 @@ class FileMovement
         return $this;
     }
 
-    public function getToLocation(): ?string
+    /*public function getToLocation(): ?string
     {
         return $this->toLocation;
     }
@@ -126,7 +136,7 @@ class FileMovement
         $this->toLocation = $toLocation;
 
         return $this;
-    }
+    }*/
 
     public function getPurpose(): ?string
     {
@@ -148,6 +158,30 @@ class FileMovement
     public function setNotes(string $notes): static
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getFromLocation(): ?Location
+    {
+        return $this->fromLocation;
+    }
+
+    public function setFromLocation(?Location $fromLocation): static
+    {
+        $this->fromLocation = $fromLocation;
+
+        return $this;
+    }
+
+    public function getToLocation(): ?Location
+    {
+        return $this->toLocation;
+    }
+
+    public function setToLocation(?Location $toLocation): static
+    {
+        $this->toLocation = $toLocation;
 
         return $this;
     }

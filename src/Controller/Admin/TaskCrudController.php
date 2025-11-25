@@ -139,7 +139,7 @@ class TaskCrudController extends AbstractCrudController
             ->onlyOnDetail()
             ->setFormTypeOption('disabled', true);
 
-        yield AssociationField::new('createdBy')
+        yield TextField::new('createdBy')
             ->onlyOnDetail()
             ->setFormTypeOption('disabled', true);
 

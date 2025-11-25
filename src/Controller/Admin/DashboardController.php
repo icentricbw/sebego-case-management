@@ -8,6 +8,7 @@ use App\Entity\Client;
 use App\Entity\CommunicationLog;
 use App\Entity\Document;
 use App\Entity\FileMovement;
+use App\Entity\Location;
 use App\Entity\Matter;
 use App\Entity\MatterUpdate;
 use App\Entity\Task;
@@ -97,6 +98,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Documents & Files');
         yield MenuItem::linkToCrud('Documents', 'fa fa-file-alt', Document::class);
         yield MenuItem::linkToCrud('Archives', 'fa fa-archive', Archive::class);
+        yield MenuItem::linkToCrud('Locations', 'fas fa-map-marker-alt', Location::class);
         yield MenuItem::linkToCrud('File Movements', 'fa fa-exchange-alt', FileMovement::class);
 
         yield MenuItem::section('Administration');

@@ -45,18 +45,21 @@ class FileMovementCrudController extends AbstractCrudController
             ->autocomplete()
             ->setHelp('User who had the file (leave blank if from location)');
 
-        yield TextField::new('fromLocation')
+        yield AssociationField::new('fromLocation', 'From')
             ->setColumns(6)
-            ->setHelp('e.g., Court, Archive, Client (leave blank if from user)');
+            ->setRequired(false)
+            ->autocomplete()
+            ->setHelp('Leave empty if this is the initial placement');
 
         yield AssociationField::new('toUser')
             ->setColumns(6)
             ->autocomplete()
             ->setHelp('User receiving the file (leave blank if to location)');
 
-        yield TextField::new('toLocation')
+        yield AssociationField::new('toLocation', 'To')
             ->setColumns(6)
-            ->setHelp('e.g., Court, Archive, Client (leave blank if to user)');
+            ->setRequired(true)
+            ->autocomplete();
 
         yield TextareaField::new('purpose')
             ->setColumns(12)
